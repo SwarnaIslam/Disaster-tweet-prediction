@@ -1,17 +1,8 @@
 import pandas as pd
-import numpy as np
-import itertools
-import seaborn as sns
 import nltk, re, string
-from string import punctuation
 from nltk.corpus import stopwords
 import matplotlib.pyplot as plt
-from sklearn.metrics import accuracy_score, f1_score, precision_score, confusion_matrix, recall_score, roc_auc_score
-from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.model_selection import train_test_split, cross_val_score
-from sklearn.linear_model import PassiveAggressiveClassifier, LogisticRegression
-from sklearn.naive_bayes import MultinomialNB, GaussianNB
-from wordcloud import WordCloud
 from nltk.stem import WordNetLemmatizer
 
 nltk.download('punkt')
