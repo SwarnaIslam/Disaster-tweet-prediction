@@ -43,4 +43,8 @@ x_train, x_test, y_train, y_test = train_test_split(x, y, test_size=0.20, strati
 tfidf_vectorizer = TfidfVectorizer(stop_words="english", max_df=0.8, ngram_range=(1, 2))
 tfidf_train_2 = tfidf_vectorizer.fit_transform(x_train)
 tfidf_test_2 = tfidf_vectorizer.transform(x_test)
+
+mnb_tf = MultinomialNB()
+mnb_tf.fit(tfidf_train_2, y_train)
+
 plt.show()
