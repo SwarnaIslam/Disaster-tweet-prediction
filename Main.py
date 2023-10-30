@@ -47,4 +47,24 @@ tfidf_test_2 = tfidf_vectorizer.transform(x_test)
 mnb_tf = MultinomialNB()
 mnb_tf.fit(tfidf_train_2, y_train)
 
+pred_mnb2 = mnb_tf.predict(tfidf_test_2)
+CM=confusion_matrix(y_test,pred_mnb2)
+
+TN = CM[0][0]
+FN = CM[1][0]
+TP = CM[1][1]
+FP = CM[0][1]
+specificity = TN/(TN+FP)
+
+acc= accuracy_score(y_test, pred_mnb2)
+
+prec = precision_score(y_test, pred_mnb2)
+rec = recall_score(y_test, pred_mnb2)
+f1 = f1_score(y_test, pred_mnb2)
+
+
+model_results =pd.DataFrame([['Multinomial Naive Bayes - TFIDF-Bigram',acc, prec,rec,specificity, f1]],
+               columns = ['Model', 'Accuracy','Precision', 'Sensitivity','Specificity', 'F1 Score'])
+
+print(model_results)
 plt.show()
