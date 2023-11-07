@@ -23,6 +23,8 @@ nltk.download('omw-1.4')
 df = pd.read_csv('train.csv')
 
 stop = set(stopwords.words('english'))
+punctuation = list(string.punctuation)
+stop.update(punctuation)
 lemma = WordNetLemmatizer()
 
 
@@ -35,12 +37,24 @@ def cleanTweet(txt):
     return txt
 
 
+def remove_links(text):
+    url_pattern = r'https?://\S+|www\.\S+|t\.co/\w+'
+    text_without_links = re.sub(url_pattern, '', text)
+    return text_without_links
+
+df['cleaned_tweets'] = df['text'].apply(remove_links)
 df['cleaned_tweets'] = df['text'].apply(cleanTweet)
+
+print(df.head(10))
+from wordcloud import WordCloud
+plt.figure(figsize = (20,20)) # Text that is Disaster tweets
+wc = WordCloud(max_words = 1000 , width = 1600 , height = 800).generate(" ".join(df[df['target']==1].cleaned_tweets))
+plt.imshow(wc , interpolation = 'bilinear')
 
 y = df.target
 x = df.cleaned_tweets
 x_train, x_test, y_train, y_test = train_test_split(x, y, test_size=0.15, stratify=y, random_state=0)
-
+#term frequency and inverse document frequency
 tfidf_vectorizer_3 = TfidfVectorizer(stop_words='english', max_df=0.8, ngram_range=(1,3))
 tfidf_train_3 = tfidf_vectorizer_3.fit_transform(x_train)
 tfidf_test_3 = tfidf_vectorizer_3.transform(x_test)
@@ -52,7 +66,7 @@ kfold = model_selection.KFold(n_splits=10)
 scoring = 'accuracy'
 
 acc_pass3 = cross_val_score(estimator = pass_tf3, X = tfidf_train_3, y = y_train, cv = kfold,scoring=scoring)
-acc_pass3.mean()
+print(acc_pass3.mean())
 
 pred_pass3 = pass_tf3.predict(tfidf_test_3)
 CM=confusion_matrix(y_test,pred_pass3)
@@ -68,7 +82,7 @@ prec = precision_score(y_test, pred_pass3)
 rec = recall_score(y_test, pred_pass3)
 f1 = f1_score(y_test, pred_pass3)
 
-mod1_results =pd.DataFrame([['Passive Aggressive Classifier - TFIDF-Trigram',acc, prec,rec,specificity, f1]],
+mod1_results =pd.DataFrame([['PA',acc, prec,rec,specificity, f1]],
                columns = ['Model', 'Accuracy','Precision', 'Sensitivity','Specificity', 'F1 Score'])
 print(mod1_results)
 
